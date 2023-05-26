@@ -18,12 +18,50 @@ module.exports = () => {
       path: path.resolve(__dirname, 'dist'),
     },
     plugins: [
-      
+        new HtmlWebpackPlugin({
+        template: './index.html',
+        title: 'text editor'
+        }),
+        new InjectManifest({
+          swSrc: './src-sw.js',
+          // swDest: './src-sw.js'
+        }),
+        new WebpackPwaManifest({
+          name: 'Text Editor',
+          short_name: 'textedit',
+          description: 'Edit text in this application',
+          background_color: '#777777',
+          theme_color: '#000000',
+          start_url: './',
+          publicPath: './',
+          icons: [
+            {
+              src: path.resolve('./src/images/logo.png'),
+              sizes: [96, 128, 192, 256, 384, 512],
+              destination: path.join('assets', 'icons')
+            }
+          ],
+          fingerprints: false
+        })
     ],
 
     module: {
       rules: [
-        
+        {
+          test: /\.css$/i,
+          use: ['style-loader', 'css-loader']
+        },
+        {
+          test: /^\.m?js$/,
+          exclude: /^node_modules$/,
+          use: {
+            loader: 'babel-loader',
+            options: {
+              presets: ['@babel/preset-env'],
+              plugins: ['@babel/plugin-proposal-object-rest-spread', '@babel/transform-runtime']
+            }
+          }
+        }
       ],
     },
   };
